@@ -1,0 +1,19 @@
+# Progol Definitivo - Requirements
+# Aplicación monolítica completa para optimización de quinielas
+
+# Core dependencies (OBLIGATORIAS)
+streamlit>=1.28.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Optional for enhanced functionality (RECOMENDADAS)
+plotly>=5.15.0
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+
+# For data validation and processing
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Additional utilities
+scipy>=1.10.0
