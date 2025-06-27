@@ -1,0 +1,45 @@
+FROM jupyter/scipy-notebook:python-3.11
+
+USER root
+
+# Install additional system dependencies
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+USER $NB_UID
+
+# Copy requirements
+COPY --chown=${NB_UID}:${NB_GID} requirements.txt /tmp/
+
+# Install Python packages
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+    pip install --no-cache-dir \
+    jupyterlab \
+    ipywidgets \
+    jupyter-contrib-nbextensions \
+    jupyter_nbextensions_configurator \
+    plotly \
+    seaborn \
+    && \
+    fix-permissions "${CONDA_DIR}" && \
+    fix-permissions "/home/${NB_USER}"
+
+# Enable nbextensions
+RUN jupyter contrib nbextension install --user && \
+    jupyter nbextensions_configurator enable --user
+
+# Copy notebooks and source code
+COPY --chown=${NB_UID}:${NB_GID} notebooks /home/${NB_USER}/notebooks
+COPY --chown=${NB_UID}:${NB_GID} src /home/${NB_USER}/src
+
+# Set up working directory
+WORKDIR /home/${NB_USER}
+
+# Configure Jupyter
+RUN echo "c.NotebookApp.token = ''" >> /home/${NB_USER}/.jupyter/jupyter_notebook_config.py && \
+    echo "c.NotebookApp.password = ''" >> /home/${NB_USER}/.jupyter/jupyter_notebook_config.py
+
+# Environment variables
+ENV PYTHONPATH="/home/${NB_USER}:${PYTHONPATH}"
