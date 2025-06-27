@@ -157,6 +157,7 @@ def main():
             # Contar signos
             signos = df_portfolio.drop(columns='quiniela_id').values.flatten()
             import matplotlib.pyplot as plt
+            import numpy as np  # ← AGREGAR ESTA LÍNEA
             
             fig, ax = plt.subplots(figsize=(8, 5))
             unique, counts = np.unique(signos, return_counts=True)
@@ -165,6 +166,13 @@ def main():
             ax.set_xlabel('Signo')
             ax.set_ylabel('Cantidad')
             ax.set_title('Distribución de Signos en las 30 Quinielas')
+            
+            # Agregar porcentajes
+            total = sum(counts)
+            for i, (label, count) in enumerate(zip(unique, counts)):
+                pct = count/total*100
+                ax.text(i, count + 5, f'{count}\n({pct:.1f}%)', 
+                       ha='center', va='bottom')
             
             st.pyplot(fig)
             
